@@ -1,0 +1,199 @@
+sw core1
+
+ena	
+conf t
+name SwCore1
+
+vlan 11
+vlan 12
+ex
+
+int range e1/1,e1/2
+sw trunk encap dot1q
+sw mode trunk
+ex
+
+spanning-tree mst configuration ***Cau hinh mstp ánh xạ vào vlan 11 và vlan 12***
+ name Cisco
+ revision 1
+ instance 1 vlan 11
+ instance 2 vlan 12
+Span mode mst     
+spanning-tree mst 1 root pri
+spanning-tree mst 2 root secondary
+
+                       ***entherchannel, port channel ,trunk, ***
+
+int range e0/1,e0/2    
+ channel-protocol lacp
+ channel-group 1 mode active
+int range e0/3,e1/0
+ channel-protocol lacp
+ channel-group 2 mode active
+interface Port-channel 1
+ ip address 172.31.23.1 255.255.255.0
+interface Port-channel 2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+
+interface Vlan11 ***HSRP***
+ ip address 172.31.11.1 255.255.255.0
+ standby 1 ip 172.31.11.254
+ standby 1 priority 200
+ standby 1 preempt
+interface Vlan12
+ ip address 172.31.12.1 255.255.255.0
+ standby 2 ip 172.31.12.252
+ standby 2 preempt
+ standby 2 priority 100
+ip routing
+int e0/0
+no switch
+ip address 172.31.21.1 255.255.255.0
+
+router ospf 1   ***ospf***
+ passive-interface Vlan11
+ passive-interface Vlan12
+ network 172.31.11.0 0.0.0.255 area 0
+ network 172.31.12.0 0.0.0.255 area 0
+ network 172.31.21.0 0.0.0.255 area 0
+ network 172.31.23.0 0.0.0.255 area 0
+ex
+
+sw core2
+
+ena	
+conf t
+name SwCore2
+
+vlan 11
+vlan 12
+ex
+
+int range e1/1,e1/2
+sw trunk encap dot1q
+sw mode trunk
+ex
+
+spanning-tree mst configuration ***Cau hinh mstp ánh xạ vào vlan 11 và vlan 12***
+ name Cisco
+ revision 1
+ instance 1 vlan 11
+ instance 2 vlan 12
+Span mode mst     
+spanning-tree mst 2 root pri
+spanning-tree mst 1 root secondary
+
+int range e0/1,e0/2    ***entherchannel, port channel ,trunk, ***
+ channel-protocol lacp
+ channel-group 1 mode active
+int range e0/3,e1/0
+ channel-protocol lacp
+ channel-group 2 mode active
+interface Port-channel 1
+ ip address 172.31.23.2 255.255.255.0
+interface Port-channel 2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+
+interface Vlan11 ***HSRP***
+ ip address 172.31.11.2 255.255.255.0
+ standby 1 ip 172.31.11.254
+ standby 1 priority 100
+ standby 1 preempt
+interface Vlan12
+ ip address 172.31.12.2 255.255.255.0
+ standby 2 ip 172.31.12.252
+ standby 2 preempt
+ standby 2 priority 200
+ip routing
+int e0/0
+no switch
+ip address 172.31.22.1 255.255.255.0
+
+router ospf 1   ***ospf***
+ passive-interface Vlan11
+ passive-interface Vlan12
+ network 172.31.11.0 0.0.0.255 area 0
+ network 172.31.12.0 0.0.0.255 area 0
+ network 172.31.22.0 0.0.0.255 area 0
+ network 172.31.23.0 0.0.0.255 area 0
+ex
+
+
+sw R5
+
+ena
+cont 
+hostname sw5
+
+int range  e0/0,e0/1
+no shut
+sw mode trunk
+ex
+int e0/3
+sw mode acc
+sw acc vlan 11
+ex
+int e0/2
+sw mode acc
+sw acc vlan 12
+ex
+
+sw R6
+
+ena
+cont 
+hostname sw6
+
+int range  e0/0,e0/1
+no shut
+sw mode trunk
+ex
+int e0/2
+sw mode acc
+sw acc vlan 12
+ex
+int e0/3
+sw mode acc
+sw acc vlan 1
+ex
+
+
+
+Router R1
+
+ena
+conf t
+host R1
+int e0/0
+no shut
+ip address 172.31.21.2 255.255.255.0
+ex
+int e0/1
+no shut
+ip address 172.168.1.1 255.255.255.0
+ex
+
+router ospf 1
+ network 172.31.11.0 0.0.0.255 area 0
+ network 172.31.12.0 0.0.0.255 area 0
+ network 172.31.22.0 0.0.0.255 area 0
+ network 172.31.23.0 0.0.0.255 area 0
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
