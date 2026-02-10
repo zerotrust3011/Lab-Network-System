@@ -1,0 +1,210 @@
+Sw Core 3
+
+ena
+conf t
+interface range e1/0,e1/1
+ channel-group 1 mode active    
+ no shutdown
+interface Port-channel 1    
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40,100,200
+ exit
+Vlan 10,20,30,40,100,200
+ exit
+ 
+int range e0/0,e0/1,e0/2,e0/3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+ 
+interface Vlan10
+ shutdown
+ no shutdown
+ ip address 192.168.10.1 255.255.255.0
+ standby 10 ip 192.168.10.254          
+ standby 10 priority 150             
+ standby 10 preempt
+ exit
+interface Vlan20
+ shutdown
+ no shutdown
+ ip address 192.168.20.1 255.255.255.0
+ standby 20 ip 192.168.20.254          
+ standby 20 priority 150             
+ standby 20 preempt
+ exit 
+interface Vlan30
+ shutdown
+ no shutdown
+ ip address 192.168.30.1 255.255.255.0
+ standby 30 ip 192.168.30.254          
+ standby 30 priority 100             
+ standby 30 preempt
+ exit
+interface Vlan40
+ shutdown
+ no shutdown
+ ip address 192.168.40.1 255.255.255.0
+ standby 40 ip 192.168.40.254          
+ standby 40 priority 100             
+ standby 40 preempt
+ exit
+int vlan 100
+ shutdown
+ no shutdown
+ ip add 10.10.10.1 255.255.255.0
+ exit
+int range e1/2,e1/3
+ switchport access vlan 100
+ switchport mode access
+ exit
+ip route 0.0.0.0 0.0.0.0 10.10.10.2
+
+
+Sw Core 4
+
+ena
+conf t
+interface range e1/0, e1/1
+ channel-group 1 mode active    
+ no shutdown
+interface Port-channel 1    
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40,100,200
+ exit
+Vlan 10,20,30,40,100,200
+ exit
+int range e0/0,e0/1,e0/2,e0/3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+interface Vlan 10
+ shutdown
+ no shutdown
+ ip address 192.168.10.2 255.255.255.0
+ standby 10 ip 192.168.10.254          
+ standby 10 priority 100             
+ standby 10 preempt
+ exit
+interface Vlan 20
+ shutdown
+ no shutdown
+ ip address 192.168.20.1 255.255.255.0
+ standby 20 ip 192.168.20.254          
+ standby 20 priority 100             
+ standby 20 preempt
+ exit
+interface Vlan30
+ shutdown
+ no shutdown
+ ip address 192.168.30.2 255.255.255.0
+ standby 30 ip 192.168.30.254          
+ standby 30 priority 150             
+ standby 30 preempt
+ exit
+interface Vlan 40
+ shutdown
+ no shutdown
+ ip address 192.168.40.2 255.255.255.0
+ standby 40 ip 192.168.40.254          
+ standby 40 priority 150              
+ standby 40 preempt
+ exit 
+int vlan 200
+ shutdown
+ no shutdown
+ ip add 10.10.20.1 255.255.255.0
+ exit
+int range e1/2,e1/3
+ switchport access vlan 200
+ switchport mode access
+ exit
+ip route 0.0.0.0 0.0.0.0 10.10.20.2
+ 
+sw Acess R8
+
+ena
+conf t
+host name Room IT
+vlan 10
+exit
+interface range e0/1,e0/2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+interface Ethernet0/0
+ switchport access vlan 10
+ switchport mode access
+ exit
+ 
+sw Acess R7
+
+ena
+conf t
+host name Room Sales
+vlan 20
+exit
+interface range e0/1,e0/2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+interface Ethernet0/0
+ switchport access vlan 20
+ switchport mode access
+ exit
+ 
+sw Acess R6
+
+ena
+conf t
+host name Room Hr
+vlan 30
+exit
+interface range e0/1,e0/2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+interface Ethernet0/0
+ switchport access vlan 30
+ switchport mode access
+ exit
+ 
+sw Acess R5
+
+ena
+conf t
+hostname RoomMKT
+vlan 40
+exit
+interface range e0/1,e0/2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+interface Ethernet0/0
+ switchport access vlan 40
+ switchport mode access
+ exit
+ 
+Fortigate1
+
+user: admin
+pass:
+config system interface
+edit port5
+set ip 192.168.50.0/24
+set allowed ping http https ssh
+next 
+end
+
+Fortigate
+
+user: admin
+pass:
+config system interface
+edit port5
+set ip 192.168.50.1/24
+set allowed ping http https ssh
+next 
+end
